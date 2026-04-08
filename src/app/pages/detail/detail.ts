@@ -1,18 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { NewsService, NewsItem } from '../../services/news.service';
+
+interface CommentItem {
+  name: string;
+  message: string;
+  date: string;
+}
 
 @Component({
   selector: 'app-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './detail.html',
 })
 export class Detail implements OnInit {
 
   newsDetail: NewsItem | null = null;
   relatedNews: NewsItem[] = [];
+
+  // 🔥 KOMENTAR
+  comments: CommentItem[] = [];
+  newComment: string = '';
 
   loading = true;
   error = false;
@@ -37,6 +48,7 @@ export class Detail implements OnInit {
     });
   }
 
+  // 🔥 LOAD DETAIL BERITA
   loadDetailById(id: string) {
 
     this.loading = true;
@@ -75,17 +87,65 @@ export class Detail implements OnInit {
     });
   }
 
+  // 🔥 SET DATA DETAIL
   setData(data: NewsItem) {
     this.newsDetail = data;
 
     const allNews = this.newsService.getNewsCache();
 
+    // 🔥 RELATED NEWS (acak biar lebih natural)
     this.relatedNews = allNews
       .filter((item: NewsItem) => item.link !== data.link)
+      .sort(() => 0.5 - Math.random())
       .slice(0, 4);
+
+    // 🔥 LOAD KOMENTAR DARI LOCAL STORAGE
+    this.loadComments();
 
     this.loading = false;
   }
+
+  // =========================
+  // 🔥 KOMENTAR SYSTEM
+  // =========================
+
+  loadComments() {
+    if (!this.newsDetail) return;
+
+    const key = 'comments_' + this.getId();
+
+    const saved = localStorage.getItem(key);
+    this.comments = saved ? JSON.parse(saved) : [];
+  }
+
+  addComment() {
+    if (!this.newComment.trim()) return;
+
+    const newData: CommentItem = {
+      name: 'User',
+      message: this.newComment,
+      date: new Date().toISOString()
+    };
+
+    this.comments.unshift(newData);
+    this.newComment = '';
+
+    this.saveComments();
+  }
+
+  saveComments() {
+    const key = 'comments_' + this.getId();
+    localStorage.setItem(key, JSON.stringify(this.comments));
+  }
+
+  getId(): string {
+    if (!this.newsDetail) return '';
+    return this.newsService.getIdFromLink(this.newsDetail.link);
+  }
+
+  // =========================
+  // 🔥 ROUTING
+  // =========================
 
   goToDetail(item: NewsItem) {
     const id = this.newsService.getIdFromLink(item.link);
@@ -102,7 +162,10 @@ export class Detail implements OnInit {
       .replace(/(^-|-$)/g, '');
   }
 
-  // ✅ FIX ERROR TS2345
+  // =========================
+  // 🔥 UTIL
+  // =========================
+
   formatDate(dateString?: string): string {
     if (!dateString) return '-';
 
@@ -123,7 +186,13 @@ export class Detail implements OnInit {
     if (title.includes('politik') || title.includes('presiden')) return 'politik';
     if (title.includes('kesehatan')) return 'kesehatan';
     if (title.includes('otomotif')) return 'otomotif';
-    if (title.includes('internasional')) return 'internasional';
+    if (
+      title.includes('amerika') ||
+      title.includes('china') ||
+      title.includes('eropa') ||
+      title.includes('singapura') ||
+      title.includes('dunia')
+    ) return 'internasional';
 
     return 'nasional';
   }
@@ -131,7 +200,7 @@ export class Detail implements OnInit {
   getImage(item: NewsItem): string {
     return item?.image?.large
         || item?.image?.small
-        || 'assets/no-image.png';
+        || 'assets/no-image.jpg';
   }
 
   onImageError(event: any) {
