@@ -1,0 +1,113 @@
+<div class="max-w-7xl mx-auto px-6 py-10 grid md:grid-cols-3 gap-8">
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="col-span-3 text-center py-20 text-gray-400">
+    Loading...
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="!loading && error" class="col-span-3 text-center py-20 text-red-500">
+    Gagal memuat berita 😢
+  </div>
+
+  <!-- DATA KOSONG -->
+  <div *ngIf="!loading && !error && !newsDetail" class="col-span-3 text-center py-20 text-gray-400">
+    Berita tidak ditemukan 😢
+  </div>
+
+  <!-- CONTENT -->
+  <ng-container *ngIf="!loading && !error && newsDetail">
+
+    <!-- LEFT -->
+    <div class="md:col-span-2">
+
+      <p class="text-blue-500 text-sm font-semibold mb-2">
+        {{ getCategory(newsDetail) | titlecase }}
+      </p>
+
+      <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-4">
+        {{ newsDetail?.title }}
+      </h1>
+
+      <div class="flex items-center gap-4 text-sm text-gray-400 mb-6">
+        <span>{{ formatDate(newsDetail?.isoDate) }}</span>
+        <span>•</span>
+        <span>5 menit baca</span>
+      </div>
+
+      <img
+        [src]="getImage(newsDetail)"
+        (error)="onImageError($event)"
+        class="w-full h-[400px] object-cover rounded-xl mb-6"
+      />
+
+      <div class="text-gray-700 leading-relaxed space-y-4">
+        <p>{{ newsDetail?.contentSnippet }}</p>
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation.</p>
+      </div>
+
+      <!-- SHARE -->
+      <div class="mt-8 flex items-center gap-4">
+        <span class="text-sm text-gray-500">Bagikan:</span>
+
+        <button class="px-3 py-1 bg-blue-500 text-white text-sm rounded">
+          Facebook
+        </button>
+
+        <button class="px-3 py-1 bg-sky-400 text-white text-sm rounded">
+          Twitter
+        </button>
+
+        <button class="px-3 py-1 bg-green-500 text-white text-sm rounded">
+          WhatsApp
+        </button>
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+
+      <h2 class="text-lg font-semibold mb-4 border-l-4 border-blue-500 pl-2">
+        Berita Terpopuler
+      </h2>
+
+      <div class="space-y-4">
+
+        <div
+          *ngFor="let item of relatedNews; let i = index"
+          class="flex gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded transition"
+          [routerLink]="goToDetail(item)"
+        >
+
+          <span class="text-lg font-bold text-gray-300">
+            {{ i + 1 }}
+          </span>
+
+          <img
+            [src]="getImage(item)"
+            (error)="onImageError($event)"
+            class="w-16 h-16 object-cover rounded"
+          />
+
+          <div>
+            <h3 class="text-sm font-semibold line-clamp-2">
+              {{ item.title }}
+            </h3>
+
+            <p class="text-xs text-gray-400 mt-1">
+              {{ getCategory(item) | titlecase }}
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </ng-container>
+
+</div>

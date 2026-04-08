@@ -1,0 +1,93 @@
+<nav
+  [ngClass]="isScrolled
+    ? 'bg-blue-600 text-white shadow-lg'
+    : 'bg-white text-gray-700'"
+  class="fixed top-0 left-0 w-full z-50 transition-all duration-300"
+>
+
+  <div class="flex items-center justify-between px-6 py-4">
+
+    <!-- LOGO -->
+    <div
+      class="flex items-center gap-2 font-bold text-lg cursor-pointer"
+      (click)="selectCategory('')"
+    >
+      <span [ngClass]="!isScrolled ? 'text-blue-500' : 'text-white'">∞</span>
+      Berita Kini
+    </div>
+
+    <!-- 🔥 DESKTOP MENU -->
+    <ul class="hidden md:flex gap-6 text-sm relative">
+
+      <li
+        *ngFor="let item of [
+          {label:'Beranda', value:''},
+          {label:'Kesehatan', value:'kesehatan'},
+          {label:'Otomotif', value:'otomotif'},
+          {label:'Politik', value:'politik'},
+          {label:'Olahraga', value:'olahraga'},
+          {label:'Nasional', value:'nasional'},
+          {label:'Internasional', value:'internasional'}
+        ]"
+        (click)="selectCategory(item.value)"
+        class="cursor-pointer pb-1 relative group"
+      >
+
+        <!-- TEXT -->
+        <span
+          [ngClass]="activeCategory === item.value
+            ? (isScrolled ? 'text-white font-semibold' : 'text-blue-500 font-semibold')
+            : ''"
+        >
+          {{ item.label }}
+        </span>
+
+        <!-- 🔥 UNDERLINE ANIMATION -->
+       <span
+        class="absolute left-0 bottom-0 h-[2px] w-0 transition-all duration-300 group-hover:w-full"
+        [ngClass]="[
+          activeCategory === item.value ? 'w-full' : '',
+          isScrolled ? 'bg-white' : 'bg-blue-500'
+        ]"
+      ></span>
+
+      </li>
+
+    </ul>
+
+    <!-- 🔥 HAMBURGER -->
+    <button
+      class="md:hidden text-2xl"
+      (click)="toggleMenu()"
+    >
+      ☰
+    </button>
+
+  </div>
+
+  <!-- 🔥 MOBILE MENU -->
+  <div
+    *ngIf="isMenuOpen"
+    class="md:hidden px-6 pb-4 space-y-3 bg-white text-gray-700 shadow-lg"
+  >
+
+    <div
+      *ngFor="let item of [
+        {label:'Beranda', value:''},
+        {label:'Kesehatan', value:'kesehatan'},
+        {label:'Otomotif', value:'otomotif'},
+        {label:'Politik', value:'politik'},
+        {label:'Olahraga', value:'olahraga'},
+        {label:'Nasional', value:'nasional'},
+        {label:'Internasional', value:'internasional'}
+      ]"
+      (click)="selectCategory(item.value)"
+      class="cursor-pointer border-b pb-2"
+      [ngClass]="activeCategory === item.value ? 'text-blue-500 font-semibold' : ''"
+    >
+      {{ item.label }}
+    </div>
+
+  </div>
+
+</nav>
