@@ -26,9 +26,15 @@ export class NewsService {
   constructor(private http: HttpClient) {}
 
   // 🔥 API CALL
-  getLatestNews(): Observable<any> {
-    return this.http.get('/api/cnn-news');
-  }
+  // getLatestNews(): Observable<any> {
+  //   return this.http.get('/api/cnn-news');
+  // }
+
+ getLatestNews(): Observable<any> {
+  return this.http.get(
+    'https://berita-indo-api-next.vercel.app/api/cnn-news'
+  );
+}
 
   // 🔥 SET CACHE
   setNews(data: NewsItem[]): void {
