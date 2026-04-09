@@ -1,203 +1,261 @@
 <div class="max-w-7xl mx-auto px-6 pt-24 pb-32">
 
-  <!-- 🔥 HEADLINE -->
-  <div *ngIf="filteredNews.length > 0"
-       class="grid md:grid-cols-2 gap-8 items-center py-10">
+  <!-- ========================= -->
+  <!-- 🔥 SKELETON GLOBAL -->
+  <!-- ========================= -->
+  <div *ngIf="loading">
 
-    <div>
-      <p class="text-sm text-gray-400 mb-2">Headline</p>
+    <!-- HEADLINE SKELETON -->
+    <div class="grid md:grid-cols-2 gap-8 items-center py-10">
+      <div class="space-y-4">
+        <div class="skeleton h-4 w-24"></div>
+        <div class="skeleton h-10 w-full"></div>
+        <div class="skeleton h-4 w-3/4"></div>
+        <div class="skeleton h-3 w-1/4"></div>
 
-      <h1 class="text-4xl font-bold mb-4 leading-tight">
-        {{ filteredNews[headlineIndex]?.title }}
-      </h1>
+        <div class="flex gap-2 mt-4">
+          <div class="skeleton w-10 h-8 rounded"></div>
+          <div class="skeleton w-10 h-8 rounded"></div>
+        </div>
+      </div>
 
-      <p class="text-gray-600 text-sm mb-4">
-        {{ filteredNews[headlineIndex]?.contentSnippet }}
-      </p>
+      <div class="skeleton w-full h-80 rounded-2xl"></div>
+    </div>
 
-      <p class="text-xs text-gray-400 mb-4">
-        {{ formatDate(filteredNews[headlineIndex]?.isoDate) }}
-      </p>
-
-      <a
-        [routerLink]="goToDetail(filteredNews[headlineIndex])"
-        class="text-blue-500 font-semibold hover:underline"
-      >
-        Baca Selengkapnya →
-      </a>
-
-      <!-- CONTROL -->
-      <div class="flex gap-3 mt-4">
-        <button (click)="prevHeadline()" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">←</button>
-        <button (click)="nextHeadline()" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">→</button>
+    <!-- TERPOPULER SKELETON -->
+    <div class="grid md:grid-cols-3 gap-6 mb-10">
+      <div *ngFor="let i of [].constructor(3)" class="flex gap-3">
+        <div class="skeleton w-20 h-20"></div>
+        <div class="flex-1 space-y-2">
+          <div class="skeleton h-4 w-full"></div>
+          <div class="skeleton h-3 w-1/2"></div>
+        </div>
       </div>
     </div>
 
-    <img
-      [src]="getImage(filteredNews[headlineIndex])"
-      (error)="onImageError($event)"
-      class="w-full h-80 object-cover rounded-2xl"
-    />
+    <!-- LIST SKELETON -->
+    <div class="grid md:grid-cols-4 gap-6">
+      <div *ngFor="let i of [].constructor(8)" class="space-y-3">
+        <div class="skeleton w-full h-40"></div>
+        <div class="skeleton h-4 w-3/4"></div>
+        <div class="skeleton h-3 w-1/2"></div>
+      </div>
+    </div>
+
   </div>
 
-  <!-- 🔥 TERPOPULER -->
-  <h2 class="text-lg font-semibold mb-4 border-l-4 border-blue-500 pl-2">
-    Berita Terpopuler
-  </h2>
+  <!-- ========================= -->
+  <!-- 🔥 CONTENT ASLI -->
+  <!-- ========================= -->
+  <div *ngIf="!loading">
 
-  <div class="grid md:grid-cols-3 gap-6 mb-10">
-
-    <div
-      *ngFor="let item of filteredNews.slice(1,4); let i = index"
-      class="flex gap-3 cursor-pointer hover:bg-gray-100 p-2 rounded transition"
-      (click)="setHeadline(i + 1)"
-    >
-
-      <span class="text-lg font-bold text-gray-300">
-        {{ i + 1 }}
-      </span>
-
-      <img
-        [src]="getImage(item)"
-        (error)="onImageError($event)"
-        class="w-20 h-20 object-cover rounded-lg"
-      />
+    <!-- 🔥 HEADLINE -->
+    <div *ngIf="filteredNews.length > 0"
+         class="grid md:grid-cols-2 gap-8 items-center py-10">
 
       <div>
-        <h3 class="text-sm font-semibold line-clamp-2">
-          {{ item.title }}
-        </h3>
+        <p class="text-sm text-gray-400 mb-2">Headline</p>
 
-        <p class="text-xs text-gray-400">
-          {{ formatDate(item.isoDate) }}
+        <h1 class="text-4xl font-bold mb-4 leading-tight">
+          {{ filteredNews[headlineIndex]?.title }}
+        </h1>
+
+        <p class="text-gray-600 text-sm mb-4">
+          {{ filteredNews[headlineIndex]?.contentSnippet }}
         </p>
+
+        <p class="text-xs text-gray-400 mb-4">
+          {{ formatDate(filteredNews[headlineIndex]?.isoDate) }}
+        </p>
+
+        <a
+          [routerLink]="goToDetail(filteredNews[headlineIndex])"
+          class="text-blue-500 font-semibold hover:underline"
+        >
+          Baca Selengkapnya →
+        </a>
+
+        <div class="flex gap-3 mt-4">
+          <button (click)="prevHeadline()" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">←</button>
+          <button (click)="nextHeadline()" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">→</button>
+        </div>
+      </div>
+
+      <!-- IMAGE HEADLINE -->
+      <div class="relative w-full h-80">
+        <div *ngIf="!headlineImageLoaded"
+             class="skeleton absolute inset-0 w-full h-full"></div>
+
+        <img
+          [src]="getImage(filteredNews[headlineIndex])"
+          loading="lazy"
+          (load)="onHeadlineLoad()"
+          (error)="onImageError($event)"
+          class="w-full h-full object-cover rounded-2xl transition-opacity duration-500"
+          [class.opacity-0]="!headlineImageLoaded"
+          [class.opacity-100]="headlineImageLoaded"
+        />
       </div>
 
     </div>
 
-  </div>
-
-  <!-- 🔥 REKOMENDASI HEADER -->
-  <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-
-    <h2 class="text-lg font-semibold border-l-4 border-blue-500 pl-3">
-      Rekomendasi Untuk Anda
+    <!-- 🔥 TERPOPULER -->
+    <h2 class="text-lg font-semibold mb-4 border-l-4 border-blue-500 pl-2">
+      Berita Terpopuler
     </h2>
 
-    <div class="relative">
-      <input
-        type="text"
-        [(ngModel)]="searchText"
-        (input)="filterNews()"
-        placeholder="Cari berita..."
-        class="border px-4 py-2 rounded-lg text-sm w-full md:w-64 pr-10 focus:ring-2 focus:ring-blue-400 outline-none"
-      />
-      <span class="absolute right-3 top-2.5 text-gray-400 text-sm">🔍</span>
-    </div>
+    <div class="grid md:grid-cols-3 gap-6 mb-10">
 
-  </div>
+      <div
+        *ngFor="let item of filteredNews.slice(1,4); let i = index"
+        class="flex gap-3 cursor-pointer hover:bg-gray-100 p-2 rounded transition"
+        (click)="setHeadline(i + 1)"
+      >
 
-  <!-- 🔥 LIST -->
-  <div class="grid md:grid-cols-4 gap-6">
+        <span class="text-lg font-bold text-gray-300">
+          {{ i + 1 }}
+        </span>
 
-    <div
-      *ngFor="let item of paginatedNews"
-      class="bg-white rounded-xl hover:shadow-md transition cursor-pointer"
-      [routerLink]="goToDetail(item)"
-    >
+        <!-- IMAGE -->
+        <div class="relative w-20 h-20">
+          <div *ngIf="!imageStates[item.link]"
+               class="skeleton absolute inset-0"></div>
 
-      <img
-        [src]="getImage(item)"
-        (error)="onImageError($event)"
-        class="w-full h-40 object-cover rounded-xl"
-      />
+          <img
+            [src]="getImage(item)"
+            loading="lazy"
+            (load)="onImageLoad(item.link)"
+            (error)="onImageError($event)"
+            class="w-full h-full object-cover rounded-lg transition-opacity duration-500"
+            [class.opacity-0]="!imageStates[item.link]"
+            [class.opacity-100]="imageStates[item.link]"
+          />
+        </div>
 
-      <div class="mt-3 space-y-1 px-1 pb-2">
-        <p class="text-xs text-blue-500 font-semibold">
-          {{ getCategory(item) | titlecase }}
-        </p>
+        <div>
+          <h3 class="text-sm font-semibold line-clamp-2">
+            {{ item.title }}
+          </h3>
 
-        <h3 class="text-sm font-semibold leading-snug line-clamp-2">
-          {{ item.title }}
-        </h3>
+          <p class="text-xs text-gray-400">
+            {{ formatDate(item.isoDate) }}
+          </p>
+        </div>
 
-        <p class="text-xs text-gray-400">
-          {{ formatDate(item.isoDate) }}
-        </p>
       </div>
 
     </div>
 
-  </div>
+    <!-- 🔥 SEARCH -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
 
-  <!-- 🔥 PAGINATION -->
-  <div class="flex flex-col md:flex-row justify-between items-center mt-10 gap-4 text-sm text-gray-500">
-
-    <!-- INFO -->
-    <div>
-      Showing
-      {{ (currentPage - 1) * itemsPerPage + 1 }}
-      to
-      {{
-        (currentPage * itemsPerPage) > filteredNews.length
-          ? filteredNews.length
-          : (currentPage * itemsPerPage)
-      }}
-      of {{ filteredNews.length }} results
-    </div>
-
-    <!-- CONTROL -->
-    <div class="flex items-center gap-2">
-
-      <button
-        (click)="prevPage()"
-        class="px-3 py-1 rounded hover:bg-gray-100"
-        [disabled]="currentPage === 1"
-      >
-        ←
-      </button>
-
-      <button
-        *ngFor="let page of [].constructor(totalPages); let i = index"
-        (click)="setPage(i + 1)"
-        class="w-8 h-8 flex items-center justify-center rounded transition"
-        [ngClass]="
-          currentPage === i + 1
-            ? 'bg-blue-500 text-white'
-            : 'hover:bg-gray-100'
-        "
-      >
-        {{ i + 1 }}
-      </button>
-
-      <button
-        (click)="nextPage()"
-        class="px-3 py-1 rounded hover:bg-gray-100"
-        [disabled]="currentPage === totalPages"
-      >
-        →
-      </button>
-
-    </div>
-
-  </div>
-
-  <!-- 🔥 IKLAN -->
-  <div class="mt-16 bg-gradient-to-r from-green-400 to-teal-500 rounded-2xl p-8 text-white relative overflow-hidden">
-
-    <div class="max-w-md">
-      <h2 class="text-2xl font-bold mb-2">
-        Petualangan Edukatif bersama
-        Malang Mbois City Tour!
+      <h2 class="text-lg font-semibold border-l-4 border-blue-500 pl-3">
+        Rekomendasi Untuk Anda
       </h2>
 
-      <p class="text-sm opacity-90">
-        Rasakan pengalaman wisata edukatif seru bersama keluarga
-      </p>
+      <div class="relative">
+        <input
+          type="text"
+          [(ngModel)]="searchText"
+          (input)="filterNews()"
+          placeholder="Cari berita..."
+          class="border px-4 py-2 rounded-lg text-sm w-full md:w-64 pr-10 focus:ring-2 focus:ring-blue-400 outline-none"
+        />
+        <span class="absolute right-3 top-2.5 text-gray-400 text-sm">🔍</span>
+      </div>
+
     </div>
 
-    <div class="absolute right-0 bottom-0 opacity-30 text-6xl pr-6 pb-2">
-      ✈️
+    <!-- 🔥 LIST -->
+    <div class="grid md:grid-cols-4 gap-6">
+
+      <div
+        *ngFor="let item of paginatedNews"
+        class="bg-white rounded-xl hover:shadow-md transition cursor-pointer"
+        [routerLink]="goToDetail(item)"
+      >
+
+        <div class="relative w-full h-40">
+          <div *ngIf="!imageStates[item.link]"
+               class="skeleton absolute inset-0"></div>
+
+          <img
+            [src]="getImage(item)"
+            loading="lazy"
+            (load)="onImageLoad(item.link)"
+            (error)="onImageError($event)"
+            class="w-full h-full object-cover rounded-xl transition-opacity duration-500"
+            [class.opacity-0]="!imageStates[item.link]"
+            [class.opacity-100]="imageStates[item.link]"
+          />
+        </div>
+
+        <div class="mt-3 space-y-1 px-1 pb-2">
+          <p class="text-xs text-blue-500 font-semibold">
+            {{ getCategory(item) | titlecase }}
+          </p>
+
+          <h3 class="text-sm font-semibold line-clamp-2">
+            {{ item.title }}
+          </h3>
+
+          <p class="text-xs text-gray-400">
+            {{ formatDate(item.isoDate) }}
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 🔥 PAGINATION -->
+    <div class="flex flex-col md:flex-row justify-between items-center mt-10 gap-4 text-sm text-gray-500">
+
+      <div>
+        Showing
+        {{ (currentPage - 1) * itemsPerPage + 1 }}
+        to
+        {{
+          (currentPage * itemsPerPage) > filteredNews.length
+            ? filteredNews.length
+            : (currentPage * itemsPerPage)
+        }}
+        of {{ filteredNews.length }} results
+      </div>
+
+      <div class="flex items-center gap-2">
+
+        <button
+          (click)="prevPage()"
+          class="px-3 py-1 rounded hover:bg-gray-100"
+          [disabled]="currentPage === 1"
+        >
+          ←
+        </button>
+
+        <button
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          (click)="setPage(i + 1)"
+          class="w-8 h-8 flex items-center justify-center rounded transition"
+          [ngClass]="
+            currentPage === i + 1
+              ? 'bg-blue-500 text-white'
+              : 'hover:bg-gray-100'
+          "
+        >
+          {{ i + 1 }}
+        </button>
+
+        <button
+          (click)="nextPage()"
+          class="px-3 py-1 rounded hover:bg-gray-100"
+          [disabled]="currentPage === totalPages"
+        >
+          →
+        </button>
+
+      </div>
+
     </div>
 
   </div>

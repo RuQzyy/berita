@@ -1,12 +1,14 @@
 <div class="max-w-7xl mx-auto px-6 py-10 grid md:grid-cols-3 gap-8">
 
   <!-- LOADING -->
-  <div *ngIf="loading" class="col-span-3 text-center py-20 text-gray-400 animate-pulse">
+  <div *ngIf="loading"
+       class="col-span-3 text-center py-20 text-gray-400 animate-pulse">
     Memuat berita...
   </div>
 
   <!-- ERROR -->
-  <div *ngIf="!loading && error" class="col-span-3 text-center py-20 text-red-500">
+  <div *ngIf="!loading && error"
+       class="col-span-3 text-center py-20 text-red-500">
     Gagal memuat berita 😢
   </div>
 
@@ -39,12 +41,23 @@
         <span>~2 menit baca</span>
       </div>
 
-      <!-- IMAGE -->
-      <img
-        [src]="getImage(newsDetail)"
-        (error)="onImageError($event)"
-        class="w-full h-[400px] object-cover rounded-xl mb-6"
-      />
+      <!-- IMAGE + SKELETON -->
+      <div class="relative w-full h-[400px] mb-6 overflow-hidden rounded-xl">
+
+        <div *ngIf="!imageLoaded"
+             class="absolute inset-0 skeleton"></div>
+
+        <img
+          [src]="getImage(newsDetail)"
+          loading="lazy"
+          (load)="onImageLoad()"
+          (error)="onImageError($event)"
+          class="w-full h-full object-cover transition-opacity duration-500"
+          [class.opacity-0]="!imageLoaded"
+          [class.opacity-100]="imageLoaded"
+        />
+
+      </div>
 
       <!-- CONTENT -->
       <div class="text-gray-700 leading-relaxed space-y-5 text-justify">
@@ -54,7 +67,8 @@
         </p>
 
         <p>
-          Artikel ini diambil dari sumber berita resmi. Untuk membaca keseluruhan isi berita,
+          Artikel ini diambil dari sumber berita resmi.
+          Untuk membaca keseluruhan isi berita,
           silakan klik tombol di bawah ini.
         </p>
 
@@ -135,7 +149,7 @@
 
         </div>
 
-        <!-- LIST KOMENTAR -->
+        <!-- LIST -->
         <div class="space-y-4">
 
           <div *ngFor="let c of comments" class="flex gap-3">
@@ -174,11 +188,23 @@
             [routerLink]="goToDetail(item)"
           >
 
-            <img
-              [src]="getImage(item)"
-              (error)="onImageError($event)"
-              class="w-full h-40 object-cover rounded-t-lg"
-            />
+            <div class="relative w-full h-40 overflow-hidden rounded-t-lg">
+
+              <!-- SKELETON -->
+              <div *ngIf="!imageStates[item.link]"
+                   class="absolute inset-0 skeleton"></div>
+
+              <img
+                [src]="getImage(item)"
+                loading="lazy"
+                (load)="imageStates[item.link] = true"
+                (error)="onImageError($event)"
+                class="w-full h-full object-cover transition-opacity duration-500"
+                [class.opacity-0]="!imageStates[item.link]"
+                [class.opacity-100]="imageStates[item.link]"
+              />
+
+            </div>
 
             <div class="p-3">
 

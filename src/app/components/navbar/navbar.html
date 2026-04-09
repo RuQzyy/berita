@@ -22,12 +22,12 @@
       <li
         *ngFor="let item of [
           {label:'Beranda', value:''},
-          {label:'Kesehatan', value:'kesehatan'},
           {label:'Otomotif', value:'otomotif'},
           {label:'Politik', value:'politik'},
           {label:'Olahraga', value:'olahraga'},
           {label:'Nasional', value:'nasional'},
-          {label:'Internasional', value:'internasional'}
+          {label:'Internasional', value:'internasional'},
+          {label:'Kesehatan', value:'kesehatan'},
         ]"
         (click)="selectCategory(item.value)"
         class="cursor-pointer pb-1 relative group"
@@ -74,12 +74,12 @@
     <div
       *ngFor="let item of [
         {label:'Beranda', value:''},
-        {label:'Kesehatan', value:'kesehatan'},
         {label:'Otomotif', value:'otomotif'},
         {label:'Politik', value:'politik'},
         {label:'Olahraga', value:'olahraga'},
         {label:'Nasional', value:'nasional'},
-        {label:'Internasional', value:'internasional'}
+        {label:'Internasional', value:'internasional'},
+        {label:'Kesehatan', value:'kesehatan'},
       ]"
       (click)="selectCategory(item.value)"
       class="cursor-pointer border-b pb-2"

@@ -205,4 +205,16 @@ export class HomeComponent implements OnInit {
     event.target.src = 'assets/no-image.png';
   }
 
+  headlineImageLoaded = false;
+
+imageStates: { [key: string]: boolean } = {};
+
+onHeadlineLoad() {
+  this.headlineImageLoaded = true;
+}
+
+onImageLoad(key: string) {
+  this.imageStates[key] = true;
+}
+
 }

@@ -17,15 +17,15 @@
 
       <div class="flex gap-3">
 
-        <div class="bg-gray-300 hover:bg-white hover:scale-110 transition text-black w-10 h-10 flex items-center justify-center rounded cursor-pointer">
+        <div (click)="openLink('youtube')" class="bg-gray-300 hover:bg-white hover:scale-110 transition text-black w-10 h-10 flex items-center justify-center rounded cursor-pointer">
           <fa-icon [icon]="faYoutube"></fa-icon>
         </div>
 
-        <div class="bg-gray-300 hover:bg-white hover:scale-110 transition text-black w-10 h-10 flex items-center justify-center rounded cursor-pointer">
+        <div (click)="openLink('instagram')" class="bg-gray-300 hover:bg-white hover:scale-110 transition text-black w-10 h-10 flex items-center justify-center rounded cursor-pointer">
           <fa-icon [icon]="faInstagram"></fa-icon>
         </div>
 
-        <div class="bg-gray-300 hover:bg-white hover:scale-110 transition text-black w-10 h-10 flex items-center justify-center rounded cursor-pointer">
+        <div (click)="openLink('facebook')" class="bg-gray-300 hover:bg-white hover:scale-110 transition text-black w-10 h-10 flex items-center justify-center rounded cursor-pointer">
           <fa-icon [icon]="faFacebook"></fa-icon>
         </div>
 
@@ -36,13 +36,15 @@
     <div>
       <h3 class="font-semibold mb-4">Telusuri</h3>
       <ul class="space-y-2 text-sm text-gray-300">
-        <li class="hover:text-white cursor-pointer">Beranda</li>
-        <li class="hover:text-white cursor-pointer">Kesehatan</li>
-        <li class="hover:text-white cursor-pointer">Otomotif</li>
-        <li class="hover:text-white cursor-pointer">Politik</li>
-        <li class="hover:text-white cursor-pointer">Olahraga</li>
-        <li class="hover:text-white cursor-pointer">Nasional</li>
-        <li class="hover:text-white cursor-pointer">Internasional</li>
+
+        <li (click)="navigateHome()" class="hover:text-white cursor-pointer">Beranda</li>
+        <li (click)="filter('otomotif')" class="hover:text-white cursor-pointer">Otomotif</li>
+        <li (click)="filter('politik')" class="hover:text-white cursor-pointer">Politik</li>
+        <li (click)="filter('olahraga')" class="hover:text-white cursor-pointer">Olahraga</li>
+        <li (click)="filter('nasional')" class="hover:text-white cursor-pointer">Nasional</li>
+        <li (click)="filter('internasional')" class="hover:text-white cursor-pointer">Internasional</li>
+        <li (click)="filter('kesehatan')" class="hover:text-white cursor-pointer">Kesehatan</li>
+
       </ul>
     </div>
 
@@ -50,9 +52,19 @@
     <div>
       <h3 class="font-semibold mb-4">Bantuan</h3>
       <ul class="space-y-2 text-sm text-gray-300">
-        <li class="hover:text-white cursor-pointer">Kontak Kami</li>
-        <li class="hover:text-white cursor-pointer">Laporan Pembajakan</li>
-        <li class="hover:text-white cursor-pointer">Kebijakan</li>
+
+        <li (click)="showAlert('Kontak kami: admin@beritakini.com')" class="hover:text-white cursor-pointer">
+          Kontak Kami
+        </li>
+
+        <li (click)="showAlert('Laporkan ke: report@beritakini.com')" class="hover:text-white cursor-pointer">
+          Laporan Pembajakan
+        </li>
+
+        <li (click)="showAlert('Kebijakan privasi Berita Kini')" class="hover:text-white cursor-pointer">
+          Kebijakan
+        </li>
+
       </ul>
     </div>
 
@@ -64,11 +76,12 @@
 
         <input
           type="email"
+          [(ngModel)]="email"
           placeholder="Masukan email"
           class="px-3 py-2 text-black text-sm w-full outline-none"
         />
 
-        <button class="bg-blue-500 px-4 flex items-center justify-center hover:bg-blue-600 transition">
+        <button (click)="subscribe()" class="bg-blue-500 px-4 flex items-center justify-center hover:bg-blue-600 transition">
           <fa-icon [icon]="faSend" class="text-white"></fa-icon>
         </button>
 

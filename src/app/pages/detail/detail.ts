@@ -21,12 +21,18 @@ export class Detail implements OnInit {
   newsDetail: NewsItem | null = null;
   relatedNews: NewsItem[] = [];
 
-  // 🔥 KOMENTAR
+  // 🔥 komentar
   comments: CommentItem[] = [];
   newComment: string = '';
 
   loading = true;
   error = false;
+
+  // 🔥 skeleton main image
+  imageLoaded = false;
+
+  // 🔥 skeleton list image (FIX BUG item.loaded)
+  imageStates: { [key: string]: boolean } = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -35,7 +41,6 @@ export class Detail implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-
       const id = params.get('id');
 
       if (!id) {
@@ -48,11 +53,14 @@ export class Detail implements OnInit {
     });
   }
 
-  // 🔥 LOAD DETAIL BERITA
-  loadDetailById(id: string) {
+  // =========================
+  // 🔥 LOAD DATA
+  // =========================
 
+  loadDetailById(id: string) {
     this.loading = true;
     this.error = false;
+    this.imageLoaded = false;
 
     const cached = this.newsService.findById(id);
 
@@ -87,19 +95,20 @@ export class Detail implements OnInit {
     });
   }
 
-  // 🔥 SET DATA DETAIL
   setData(data: NewsItem) {
     this.newsDetail = data;
 
     const allNews = this.newsService.getNewsCache();
 
-    // 🔥 RELATED NEWS (acak biar lebih natural)
-    this.relatedNews = allNews
-      .filter((item: NewsItem) => item.link !== data.link)
-      .sort(() => 0.5 - Math.random())
+    // 🔥 shuffle related
+    this.relatedNews = [...allNews]
+      .filter(item => item.link !== data.link)
+      .sort(() => Math.random() - 0.5)
       .slice(0, 4);
 
-    // 🔥 LOAD KOMENTAR DARI LOCAL STORAGE
+    // 🔥 reset image state (WAJIB biar skeleton muncul lagi)
+    this.imageStates = {};
+
     this.loadComments();
 
     this.loading = false;
@@ -114,8 +123,12 @@ export class Detail implements OnInit {
 
     const key = 'comments_' + this.getId();
 
-    const saved = localStorage.getItem(key);
-    this.comments = saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem(key);
+      this.comments = saved ? JSON.parse(saved) : [];
+    } catch {
+      this.comments = [];
+    }
   }
 
   addComment() {
@@ -123,8 +136,8 @@ export class Detail implements OnInit {
 
     const newData: CommentItem = {
       name: 'User',
-      message: this.newComment,
-      date: new Date().toISOString()
+      message: this.newComment.trim(),
+      date: new Date().toLocaleString('id-ID')
     };
 
     this.comments.unshift(newData);
@@ -139,7 +152,7 @@ export class Detail implements OnInit {
   }
 
   getId(): string {
-    if (!this.newsDetail) return '';
+    if (!this.newsDetail?.link) return '';
     return this.newsService.getIdFromLink(this.newsDetail.link);
   }
 
@@ -160,6 +173,18 @@ export class Detail implements OnInit {
       .trim()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
+  }
+
+  // =========================
+  // 🔥 IMAGE HANDLER
+  // =========================
+
+  onImageLoad() {
+    this.imageLoaded = true;
+  }
+
+  onRelatedImageLoad(key: string) {
+    this.imageStates[key] = true;
   }
 
   // =========================
@@ -186,6 +211,7 @@ export class Detail implements OnInit {
     if (title.includes('politik') || title.includes('presiden')) return 'politik';
     if (title.includes('kesehatan')) return 'kesehatan';
     if (title.includes('otomotif')) return 'otomotif';
+
     if (
       title.includes('amerika') ||
       title.includes('china') ||
@@ -204,7 +230,7 @@ export class Detail implements OnInit {
   }
 
   onImageError(event: any) {
-    event.target.src = 'assets/no-image.png';
+    event.target.src = 'assets/no-image.jpg';
   }
 
 }
