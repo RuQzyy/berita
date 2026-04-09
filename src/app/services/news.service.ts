@@ -31,9 +31,7 @@ export class NewsService {
   // }
 
  getLatestNews(): Observable<any> {
-  return this.http.get(
-    'https://berita-indo-api-next.vercel.app/api/cnn-news'
-  );
+  return this.http.get('/api/news');
 }
 
   // 🔥 SET CACHE

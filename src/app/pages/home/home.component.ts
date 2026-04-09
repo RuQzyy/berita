@@ -45,35 +45,42 @@ export class HomeComponent implements OnInit {
     this.getNews();
   }
 
+  // 🔥 FIX API (ANTI CORS)
   getNews() {
     this.loading = true;
     this.error = false;
 
     this.newsService.getLatestNews().subscribe({
-      next: (res: any) => {
+      next: (res: { data: NewsItem[] }) => {
 
-        this.news = (res?.data || []).filter(
-          (item: NewsItem) => item?.image?.large || item?.image?.small
+        const data = res?.data || [];
+
+        // FILTER biar gak ada gambar kosong
+        this.news = data.filter(
+          (item) => item?.image?.large || item?.image?.small
         );
 
+        // simpan ke cache
         this.newsService.setNews(this.news);
 
+        // jalankan filter
         this.filterNews();
 
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err) => {
+        console.error('API ERROR:', err);
         this.error = true;
         this.loading = false;
       }
     });
   }
 
-  // FILTER (SEMUA KATEGORI MUNCUL)
+  // 🔥 FILTER
   filterNews() {
 
-    this.filteredNews = this.news.filter((item: NewsItem) => {
+    this.filteredNews = this.news.filter((item) => {
 
       const title = item.title?.toLowerCase() || '';
       const content = item.contentSnippet?.toLowerCase() || '';
@@ -82,7 +89,6 @@ export class HomeComponent implements OnInit {
         title.includes(this.searchText.toLowerCase()) ||
         content.includes(this.searchText.toLowerCase());
 
-      // FIX: kategori fleksibel (tidak bikin kosong)
       const matchCategory = this.selectedCategory
         ? this.getCategory(item).includes(this.selectedCategory)
         : true;
@@ -99,7 +105,7 @@ export class HomeComponent implements OnInit {
     this.currentPage = 1;
   }
 
-  // PAGINATION
+  // 🔥 PAGINATION
   get paginatedNews(): NewsItem[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredNews.slice(start, start + this.itemsPerPage);
@@ -122,7 +128,7 @@ export class HomeComponent implements OnInit {
     if (this.currentPage > 1) this.currentPage--;
   }
 
-  // ROUTING
+  // 🔥 ROUTING
   goToDetail(item: NewsItem) {
     const id = this.newsService.getIdFromLink(item.link);
     const slug = this.slugify(item.title);
@@ -138,7 +144,7 @@ export class HomeComponent implements OnInit {
       .replace(/(^-|-$)/g, '');
   }
 
-  // HEADLINE CONTROL
+  // 🔥 HEADLINE CONTROL
   setHeadline(index: number) {
     this.headlineIndex = index;
   }
@@ -154,7 +160,7 @@ export class HomeComponent implements OnInit {
       this.filteredNews.length;
   }
 
-  // DATE
+  // 🔥 DATE FORMAT
   formatDate(dateString?: string): string {
     if (!dateString) return '-';
 
@@ -168,7 +174,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  // CATEGORY
+  // 🔥 CATEGORY
   getCategory(item: NewsItem): string {
     const title = item.title?.toLowerCase() || '';
 
@@ -195,6 +201,7 @@ export class HomeComponent implements OnInit {
     return 'nasional';
   }
 
+  // 🔥 IMAGE
   getImage(item: NewsItem): string {
     return item?.image?.large
         || item?.image?.small
@@ -206,15 +213,14 @@ export class HomeComponent implements OnInit {
   }
 
   headlineImageLoaded = false;
+  imageStates: { [key: string]: boolean } = {};
 
-imageStates: { [key: string]: boolean } = {};
+  onHeadlineLoad() {
+    this.headlineImageLoaded = true;
+  }
 
-onHeadlineLoad() {
-  this.headlineImageLoaded = true;
-}
-
-onImageLoad(key: string) {
-  this.imageStates[key] = true;
-}
+  onImageLoad(key: string) {
+    this.imageStates[key] = true;
+  }
 
 }
