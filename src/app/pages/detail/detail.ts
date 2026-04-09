@@ -21,17 +21,17 @@ export class Detail implements OnInit {
   newsDetail: NewsItem | null = null;
   relatedNews: NewsItem[] = [];
 
-  // 🔥 komentar
+  // komentar
   comments: CommentItem[] = [];
   newComment: string = '';
 
   loading = true;
   error = false;
 
-  // 🔥 skeleton main image
+  // skeleton main image
   imageLoaded = false;
 
-  // 🔥 skeleton list image (FIX BUG item.loaded)
+  // skeleton list image
   imageStates: { [key: string]: boolean } = {};
 
   constructor(
@@ -54,7 +54,7 @@ export class Detail implements OnInit {
   }
 
   // =========================
-  // 🔥 LOAD DATA
+  // LOAD DATA
   // =========================
 
   loadDetailById(id: string) {
@@ -100,13 +100,13 @@ export class Detail implements OnInit {
 
     const allNews = this.newsService.getNewsCache();
 
-    // 🔥 shuffle related
+    // shuffle related
     this.relatedNews = [...allNews]
       .filter(item => item.link !== data.link)
       .sort(() => Math.random() - 0.5)
       .slice(0, 4);
 
-    // 🔥 reset image state (WAJIB biar skeleton muncul lagi)
+    // reset image state (WAJIB biar skeleton muncul lagi)
     this.imageStates = {};
 
     this.loadComments();
@@ -115,7 +115,7 @@ export class Detail implements OnInit {
   }
 
   // =========================
-  // 🔥 KOMENTAR SYSTEM
+  // KOMENTAR SYSTEM
   // =========================
 
   loadComments() {
@@ -157,7 +157,7 @@ export class Detail implements OnInit {
   }
 
   // =========================
-  // 🔥 ROUTING
+  // ROUTING
   // =========================
 
   goToDetail(item: NewsItem) {
@@ -176,7 +176,7 @@ export class Detail implements OnInit {
   }
 
   // =========================
-  // 🔥 IMAGE HANDLER
+  // IMAGE HANDLER
   // =========================
 
   onImageLoad() {
@@ -188,7 +188,7 @@ export class Detail implements OnInit {
   }
 
   // =========================
-  // 🔥 UTIL
+  // UTIL
   // =========================
 
   formatDate(dateString?: string): string {

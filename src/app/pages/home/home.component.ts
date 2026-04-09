@@ -70,7 +70,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  // 🔥 FILTER (SEMUA KATEGORI MUNCUL)
+  // FILTER (SEMUA KATEGORI MUNCUL)
   filterNews() {
 
     this.filteredNews = this.news.filter((item: NewsItem) => {
@@ -82,7 +82,7 @@ export class HomeComponent implements OnInit {
         title.includes(this.searchText.toLowerCase()) ||
         content.includes(this.searchText.toLowerCase());
 
-      // 🔥 FIX: kategori fleksibel (tidak bikin kosong)
+      // FIX: kategori fleksibel (tidak bikin kosong)
       const matchCategory = this.selectedCategory
         ? this.getCategory(item).includes(this.selectedCategory)
         : true;
@@ -90,7 +90,7 @@ export class HomeComponent implements OnInit {
       return matchSearch && matchCategory;
     });
 
-    // 🔥 ANTI KOSONG
+    // ANTI KOSONG
     if (this.filteredNews.length === 0) {
       this.filteredNews = [...this.news];
     }
@@ -99,7 +99,7 @@ export class HomeComponent implements OnInit {
     this.currentPage = 1;
   }
 
-  // 🔥 PAGINATION
+  // PAGINATION
   get paginatedNews(): NewsItem[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredNews.slice(start, start + this.itemsPerPage);
@@ -122,7 +122,7 @@ export class HomeComponent implements OnInit {
     if (this.currentPage > 1) this.currentPage--;
   }
 
-  // 🔥 ROUTING
+  // ROUTING
   goToDetail(item: NewsItem) {
     const id = this.newsService.getIdFromLink(item.link);
     const slug = this.slugify(item.title);
@@ -138,7 +138,7 @@ export class HomeComponent implements OnInit {
       .replace(/(^-|-$)/g, '');
   }
 
-  // 🔥 HEADLINE CONTROL
+  // HEADLINE CONTROL
   setHeadline(index: number) {
     this.headlineIndex = index;
   }
@@ -154,7 +154,7 @@ export class HomeComponent implements OnInit {
       this.filteredNews.length;
   }
 
-  // 🔥 DATE
+  // DATE
   formatDate(dateString?: string): string {
     if (!dateString) return '-';
 
@@ -168,7 +168,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  // 🔥 CATEGORY (FULL FIX → semua kategori muncul)
+  // CATEGORY
   getCategory(item: NewsItem): string {
     const title = item.title?.toLowerCase() || '';
 

@@ -13,7 +13,7 @@ export class NavbarComponent implements OnInit {
 
   isScrolled = false;
   activeCategory: string = '';
-  isMenuOpen: boolean = false; // 🔥 MOBILE
+  isMenuOpen: boolean = false;
 
   constructor(
     private categoryService: CategoryService,
@@ -36,7 +36,7 @@ export class NavbarComponent implements OnInit {
     this.activeCategory = category;
 
     this.router.navigate(['/']);
-    this.isMenuOpen = false; // 🔥 close mobile
+    this.isMenuOpen = false; 
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
